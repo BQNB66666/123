@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>全球灵异事件处理总部</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Microsoft YaHei',sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#050a08;color:#fff;height:100vh;overflow:hidden;font-size:14px}
+.page{display:none;width:100%;height:100%;overflow-y:auto;position:relative;opacity:0;transition:opacity .4s;padding-bottom:70px}
+.page.active{display:block;opacity:1}
+#page-login{background:radial-gradient(circle at 50% 30%,#0d1f16 0%,#050a08 70%);justify-content:center;align-items:center;padding-bottom:0}
+#page-login.active{display:flex}
+.login-container{width:100%;max-width:400px;padding:20px;z-index:1}
+.logo-area{text-align:center;margin-bottom:30px}
+.logo-icon{width:80px;height:80px;margin:0 auto 15px;background:url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="%2324e06f" stroke-width="2"/><circle cx="50" cy="50" r="35" fill="none" stroke="%2324e06f" stroke-width="1" stroke-dasharray="4 4"/><path d="M50 15 L50 85 M15 50 L85 50" stroke="%2324e06f" stroke-width="2"/><circle cx="50" cy="50" r="10" fill="none" stroke="%2324e06f" stroke-width="2"/></svg>') no-repeat center/cover;filter:drop-shadow(0 0 10px rgba(36,224,111,.5))}
+.main-title{font-size:22px;font-weight:bold;letter-spacing:2px;text-shadow:0 0 10px rgba(36,224,111,.4)}
+.sub-title{color:rgba(36,224,111,.5);font-size:10px;letter-spacing:4px;font-family:monospace}
+.login-box{border:1px solid rgba(36,224,111,.3);border-radius:12px;padding:30px 20px;background:rgba(8,18,13,.7);backdrop-filter:blur(5px);box-shadow:inset 0 0 20px rgba(36,224,111,.05)}
+.input-group{margin-bottom:20px}
+.input-group input{width:100%;background:rgba(18,35,27,.8);border:1px solid rgba(36,224,111,.3);border-radius:6px;padding:14px 15px;color:#fff;font-size:16px;outline:none;transition:border-color .3s}
+.input-group input:focus{border-color:#24e06f;box-shadow:0 0 10px rgba(36,224,111,.2)}
+.options{display:flex;justify-content:space-between;font-size:13px;margin-bottom:25px;color:rgba(255,255,255,.6)}
+.options a{color:rgba(36,224,111,.8);text-decoration:none}
+.submit-btn{width:100%;background:#24e06f;color:#050a08;border:none;border-radius:6px;padding:15px;font-size:18px;font-weight:bold;letter-spacing:4px;cursor:pointer;box-shadow:0 0 15px rgba(36,224,111,.4);transition:.3s}
+.submit-btn:active{transform:scale(.98)}
+#loading-mask{position:fixed;top:0;left:0;width:100%;height:100%;background:#050a08;z-index:999;display:none;flex-direction:column;justify-content:center;align-items:center;opacity:0;transition:opacity .3s}
+#loading-mask.show{display:flex;opacity:1}
+.loader-text{color:#24e06f;font-size:16px;letter-spacing:2px;margin-bottom:15px;font-family:monospace}
+.loader-bar{width:200px;height:2px;background:rgba(36,224,111,.2);overflow:hidden;position:relative}
+.loader-bar::after{content:'';position:absolute;left:-100%;width:100%;height:100%;background:#24e06f;animation:load 1s infinite linear}
+@keyframes load{0%{left:-100%}100%{left:100%}}
+.header-bar{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;font-size:18px;color:#24e06f;font-weight:bold;border-bottom:1px solid rgba(36,224,111,.1);background:#050a08}
+.alert-bar{background:linear-gradient(90deg,#7a0000,#3a0000);color:#fcc;padding:8px 15px;font-size:12px;display:flex;align-items:center;border-bottom:1px solid #f00}
+.alert-bar i{margin-right:8px;font-style:normal;color:#f33}
+.home-content{padding:20px}
+.dashboard{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
+.stat-card{background:#0a1c13;border:1px solid #1a4d31;border-radius:8px;padding:15px;text-align:center;box-shadow:inset 0 0 10px rgba(36,224,111,.1)}
+.stat-num{font-size:24px;color:#24e06f;font-weight:bold;font-family:monospace;text-shadow:0 0 10px rgba(36,224,111,.5);margin-bottom:5px}
+.stat-label{font-size:12px;color:#888}
+.news-card{background:#0a1c13;border:1px solid #1a4d31;border-radius:8px;padding:20px;margin-bottom:20px}
+.news-title{color:#24e06f;border-left:3px solid #24e06f;padding-left:10px;margin-bottom:15px;font-weight:bold;font-size:16px}
+.news-item{font-size:13px;color:#aaa;line-height:1.6;margin-bottom:10px;border-bottom:1px dashed rgba(36,224,111,.2);padding-bottom:10px}
+.news-item:last-child{margin-bottom:0;border-bottom:none;padding-bottom:0}
+.quick-btn{width:100%;background:rgba(255,51,51,.1);color:#f33;border:1px solid #f33;padding:12px;font-size:16px;font-weight:bold;cursor:pointer;border-radius:4px;box-shadow:0 0 10px rgba(255,0,0,.2);transition:.3s}
+.quick-btn:hover{background:rgba(255,51,51,.2)}
+.profile-content{padding:20px}
+.id-card{background:#0a1c13;border:1px solid #1a4d31;border-radius:8px;position:relative;padding:20px;box-shadow:0 0 15px rgba(0,0,0,.8)}
+.id-card::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:linear-gradient(90deg,transparent,#f33,transparent);border-radius:8px 8px 0 0}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;border-bottom:1px dashed rgba(36,224,111,.3);padding-bottom:10px}
+.card-title{color:#24e06f;font-size:16px;letter-spacing:1px}
+.card-badge{color:#f33;border:1px solid #f33;padding:2px 6px;font-size:12px;border-radius:2px;transform:rotate(-5deg)}
+.avatar-area{text-align:center;margin-bottom:20px;position:relative}
+.avatar-box{width:120px;height:150px;margin:0 auto;border:1px solid rgba(36,224,111,.5);position:relative;overflow:hidden;cursor:pointer;background:#000;transition:.3s}
+.avatar-box:hover{border-color:#24e06f;box-shadow:0 0 15px rgba(36,224,111,.3)}
+.avatar-box img{width:100%;height:100%;object-fit:cover}
+.avatar-box::after{content:'点击更换';position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);color:#24e06f;font-size:12px;padding:6px 0;opacity:0;transition:.3s;transform:translateY(100%)}
+.avatar-box:hover::after{opacity:1;transform:translateY(0)}
+.avatar-label{color:rgba(255,255,255,.4);font-size:12px;margin-top:8px}
+.info-list{color:#999;font-size:14px;line-height:2.2}
+.info-row{display:flex;align-items:center}
+.info-label{width:80px;flex-shrink:0}
+.info-value{color:#ccc;flex:1;min-width:0}
+.info-value.highlight{color:#24e06f;font-weight:bold;font-size:18px;text-shadow:0 0 5px rgba(36,224,111,.5)}
+.name-btn{margin-left:8px;background:rgba(36,224,111,.1);border:1px solid rgba(36,224,111,.5);color:#24e06f;font-size:12px;padding:2px 8px;border-radius:3px;cursor:pointer;vertical-align:middle;transition:.2s}
+.name-btn:hover{background:rgba(36,224,111,.2)}
+.name-btn.cancel{border-color:#f33;color:#f33;background:rgba(255,51,51,.08)}
+.name-edit{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.name-edit input{width:120px;background:rgba(18,35,27,.8);border:1px solid #24e06f;border-radius:4px;padding:4px 8px;color:#fff;font-size:15px;outline:none;box-shadow:0 0 8px rgba(36,224,111,.2)}
+.barcode-area{margin-top:30px;display:flex;justify-content:space-between;align-items:flex-end}
+.barcode{display:flex;gap:4px;height:30px}
+.barcode div{width:2px;background:#24e06f}
+.barcode div:nth-child(even){width:4px}
+.barcode div:nth-child(3n){width:1px;height:25px}
+.stamp{width:70px;height:70px;border:2px solid #f33;border-radius:50%;color:#f33;display:flex;justify-content:center;align-items:center;font-size:12px;text-align:center;line-height:1.2;transform:rotate(-15deg);opacity:.8}
+.card-footer{text-align:center;font-size:12px;color:rgba(36,224,111,.3);margin-top:20px}
+#page-task{background:rgba(0,0,0,.85);position:fixed;top:0;left:0;width:100%;height:100%;z-index:100;display:none;padding:20px;overflow-y:auto;backdrop-filter:blur(3px)}
+#page-task.active{display:flex;justify-content:center;align-items:flex-start;padding-top:50px}
+.task-modal{width:100%;max-width:400px;background:#150a0a;border:1px solid #f33;border-radius:6px;box-shadow:0 0 30px rgba(255,0,0,.2);overflow:hidden}
+.task-header{background:#2a0d0d;border-bottom:1px solid #500;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;color:#f33;font-weight:bold;font-size:16px}
+.task-header .level{font-size:12px;font-weight:normal}
+.task-body{padding:20px;color:#ccc;line-height:1.6;font-size:14px}
+.task-title{color:#f33;font-size:20px;font-weight:bold;margin-bottom:15px;letter-spacing:2px}
+.task-alert{color:#24e06f;margin-bottom:15px}
+.task-order{border-left:2px solid #24e06f;padding-left:15px;margin:15px 0;color:#24e06f}
+.task-quote{color:rgba(255,255,255,.6);font-style:italic;margin-top:20px;font-family:monospace}
+.task-footer{display:flex;gap:10px;padding:15px;border-top:1px dashed rgba(255,0,0,.3)}
+.btn-accept{flex:2;background:rgba(36,224,111,.1);border:1px solid #24e06f;color:#24e06f;padding:12px;font-size:16px;font-weight:bold;cursor:pointer;border-radius:4px}
+.btn-reject{flex:1;background:transparent;border:1px solid #f33;color:#f33;padding:12px;font-size:16px;cursor:pointer;border-radius:4px}
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:60px;background:#050a08;border-top:1px solid rgba(36,224,111,.1);display:none;justify-content:space-around;align-items:center;z-index:10}
+.bottom-nav.show{display:flex}
+.nav-item{color:#666;font-size:15px;cursor:pointer;padding:15px;transition:.3s;font-weight:bold}
+.nav-item.active{color:#24e06f;text-shadow:0 0 8px rgba(36,224,111,.5)}
+#fileInput{display:none}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);color:#24e06f;padding:10px 20px;border-radius:5px;border:1px solid #24e06f;font-size:14px;z-index:9999;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="loading-mask"><div class="loader-text">正在验证人员权限...</div><div class="loader-bar"></div></div>
+<div class="toast" id="toast">操作成功</div>
+<div id="page-login" class="page active">
+<div class="login-container">
+<div class="logo-area"><div class="logo-icon"></div><div class="main-title">全球灵异事件处理总部</div><div class="sub-title">G.H.Q. GHOST PROTOCOL</div></div>
+<div class="login-box">
+<form onsubmit="handleLogin(event)">
+<div class="input-group"><input type="text" id="login-account" placeholder="请输入人员编号/账号" required autocomplete="off"></div>
+<div class="input-group"><input type="password" id="login-password" placeholder="••••••••••" required></div>
+<div class="options"><label><input type="checkbox" checked> 记住登录</label><a href="javascript:alert('请联系总部秘书处重置密码！')">忘记密码?</a></div>
+<button type="submit" class="submit-btn">进入总部</button>
+</form>
+</div>
+</div>
+</div>
+<div id="page-home" class="page">
+<div class="header-bar"><span>总部概览</span><span style="font-size:14px;color:rgba(36,224,111,.5)">系统在线</span></div>
+<div class="alert-bar"><i>⚠</i> 红色警报：亚洲区第三号鬼域持续扩大，S-001鬼邮局核心区空间崩坏加速。全体待命！</div>
+<div class="home-content">
+<div class="dashboard">
+<div class="stat-card"><div class="stat-num">3</div><div class="stat-label">S级事件爆发中</div></div>
+<div class="stat-card"><div class="stat-num">128</div><div class="stat-label">在职驭鬼者</div></div>
+<div class="stat-card"><div class="stat-num">98%</div><div class="stat-label">鬼域镇压率</div></div>
+<div class="stat-card"><div class="stat-num">14</div><div class="stat-label">今日阵亡人数</div></div>
+</div>
+<div class="news-card">
+<div class="news-title">全服通告</div>
+<div class="news-item">【最高指令】欧洲区域S级灵异事件同时爆发，所有在职驭鬼者即刻响应向欧洲战区增援。</div>
+<div class="news-item">【内部通报】S-001鬼邮局核心区空间崩坏加速，请附近人员撤离。</div>
+<div class="news-item">【人事任命】恭喜新一批见习驭鬼者完成考核，正式加入总部。</div>
+</div>
+<button class="quick-btn" onclick="openTask()">查看最高优先级任务</button>
+</div>
+</div>
+<div id="page-profile" class="page">
+<div class="header-bar"><span>个人主页</span><span style="font-size:14px;color:rgba(36,224,111,.5)">系统在线</span></div>
+<div class="alert-bar"><i>⚠</i> 红色警报：亚洲区第三号鬼域持续扩大，S-001鬼邮局核心区空间崩坏加速。全体待命！</div>
+<div class="profile-content">
+<div class="id-card">
+<div class="card-header"><div class="card-title">全球灵异事件处理总部</div><div class="card-badge">人员证件</div></div>
+<div class="avatar-area">
+<div class="avatar-box" onclick="document.getElementById('fileInput').click()">
+<img id="user-avatar" src="data:image/svg+xml;utf8,<svg viewBox='0 0 100 120' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23111'/><path d='M50 40 A15 15 0 1 1 50 70 A15 15 0 1 1 50 40 M20 100 Q20 70 50 70 Q80 70 80 100' fill='none' stroke='%2324e06f' stroke-width='2'/></svg>" alt="证件照">
+</div>
+<input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
+<div class="avatar-label">证件照 (点击更换)</div>
+</div>
+<div class="info-list">
+<div class="info-row" id="name-display-row"><div class="info-label">姓名</div><div class="info-value highlight"><span id="user-name">WRq915274</span><button type="button" class="name-btn" onclick="startEditName()">修改</button></div></div>
+<div class="info-row" id="name-edit-row" style="display:none"><div class="info-label">姓名</div><div class="info-value name-edit"><input type="text" id="name-input" maxlength="20" placeholder="请输入姓名" onkeydown="nameKeydown(event)"><button type="button" class="name-btn" onclick="saveName()">保存</button><button type="button" class="name-btn cancel" onclick="cancelEditName()">取消</button></div></div>
+<div class="info-row"><div class="info-label">代号</div><div class="info-value">WRq915274</div></div>
+<div class="info-row"><div class="info-label">人员编号</div><div class="info-value">7FD37D276EE8484C</div></div>
+<div class="info-row"><div class="info-label">行政级别</div><div class="info-value">一级驭鬼者（见习）</div></div>
+<div class="info-row"><div class="info-label">所属区域</div><div class="info-value">亚洲区</div></div>
+<div class="info-row"><div class="info-label">当前状态</div><div class="info-value" style="color:#d4a373;">待命</div></div>
+<div class="info-row"><div class="info-label">报到日期</div><div class="info-value">二〇二六年十月十五日</div></div>
+</div>
+<div class="barcode-area">
+<div class="barcode"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<div class="stamp">证件专用章</div>
+</div>
+<div class="card-footer">本证件为总部人员唯一身份凭证，不得转借、涂改、伪造</div>
+</div>
+</div>
+</div>
+<div id="page-task" onclick="if(event.target===this)closeTask()">
+<div class="task-modal">
+<div class="task-header"><span>⚠ 全服紧急任务</span><span class="level">S 级 · 绝密</span></div>
+<div class="task-body">
+<div class="task-title">紧急任务 · 驰援欧洲</div>
+<div class="task-alert">欧洲区域 S 级灵异事件同时爆发（三起 S 级事件），总部急需增援。</div>
+<div class="task-order">
+<p style="margin-bottom:10px;">【绝密 · 最高优先级 · 全服通告】</p>
+<p style="margin-bottom:15px;">欧洲分部紧急求援：伦敦、柏林、罗马三地上空同时出现 S 级鬼域投影，三起 S 级灵异事件在同一时刻爆发，欧洲分部防线全面告急。</p>
+<p style="margin-bottom:15px;">总部命令：所有在职驭鬼者即刻响应，向欧洲战区增援。本次驰援不设等级门槛，凡响应者均计入全服增援序列。</p>
+<p style="color:#f99;">接取即代表你已驰援欧洲；拒绝将被记入本战区响应记录。</p>
+</div>
+<div class="task-quote">「鬼无法被杀死，但可以被镇压。」<br>—— 总部秘书处 · 第 7 号最高指令</div>
+</div>
+<div class="task-footer"><button class="btn-accept" onclick="acceptTask()">接取任务 · 驰援欧洲</button><button class="btn-reject" onclick="closeTask()">拒绝</button></div>
+</div>
+</div>
+<div class="bottom-nav" id="bottom-nav">
+<div class="nav-item active" id="nav-home" onclick="switchPage('page-home','nav-home')">首页</div>
+<div class="nav-item" onclick="showToast('社区功能暂未开放')">社区</div>
+<div class="nav-item" onclick="openTask()">任务</div>
+<div class="nav-item" onclick="showToast('消息模块维护中')">消息</div>
+<div class="nav-item" id="nav-profile" onclick="switchPage('page-profile','nav-profile')">我的</div>
+</div>
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.innerText=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2000)}
+function switchPage(pageId,navId){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(pageId).classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(navId)document.getElementById(navId).classList.add('active')}
+function handleLogin(e){e.preventDefault();const btn=e.target.querySelector('.submit-btn');btn.disabled=true;btn.innerText="正在连接...";const mask=document.getElementById('loading-mask');mask.classList.add('show');setTimeout(()=>{btn.disabled=false;btn.innerText="进入总部";document.getElementById('page-login').classList.remove('active');document.getElementById('bottom-nav').classList.add('show');switchPage('page-home','nav-home');mask.classList.remove('show');setTimeout(openTask,300)},1200)}
+function previewImage(e){const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){showToast('请选择图片文件');return}const r=new FileReader();r.onload=function(ev){document.getElementById('user-avatar').src=ev.target.result;showToast("头像更新成功")};r.readAsDataURL(f);e.target.value=''}
+let originalName='';
+function startEditName(){originalName=document.getElementById('user-name').innerText;const input=document.getElementById('name-input');input.value=originalName;document.getElementById('name-display-row').style.display='none';document.getElementById('name-edit-row').style.display='flex';input.focus();input.select()}
+function saveName(){const v=document.getElementById('name-input').value.trim();if(!v){showToast('姓名不能为空');document.getElementById('name-input').focus();return}document.getElementById('user-name').innerText=v;exitNameEdit();showToast("姓名已保存")}
+function cancelEditName(){exitNameEdit();showToast("已取消修改")}
+function exitNameEdit(){document.getElementById('name-display-row').style.display='flex';document.getElementById('name-edit-row').style.display='none';document.getElementById('name-input').value=''}
+function nameKeydown(e){if(e.key==='Enter'){e.preventDefault();saveName()}else if(e.key==='Escape'){e.preventDefault();cancelEditName()}}
+function openTask(){document.getElementById('page-task').classList.add('active')}
+function closeTask(){document.getElementById('page-task').classList.remove('active')}
+function acceptTask(){closeTask();showToast("指令已确认：正在传送至欧洲战区…")}
+</script>
+</body>
+</html>
